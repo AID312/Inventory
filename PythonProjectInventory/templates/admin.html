@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <script>
+        function toggleEdit(itemId) {
+            var editForm = document.getElementById('edit-form-' + itemId);
+            var displayForm = document.getElementById('display-form-' + itemId);
+            if (editForm.style.display === 'none') {
+                editForm.style.display = 'table-row';
+                displayForm.style.display = 'none';
+            } else {
+                editForm.style.display = 'none';
+                displayForm.style.display = 'table-row';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Admin - Edit Inventory</h1>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Edit</th>
+        </tr>
+        {% for item in items %}
+        <tr id="display-form-{{ item.id }}">
+            <td>{{ item.id }}</td>
+            <td>{{ item.item_name }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.status }}</td>
+            <td>
+                <button onclick="toggleEdit({{ item.id }})">Edit</button>
+            </td>
+        </tr>
+        <tr id="edit-form-{{ item.id }}" style="display:none">
+            <form action="{{ url_for('edit_item', item_id=item.id) }}" method="post">
+                <td>{{ item.id }}</td>
+                <td><input type="text" name="item_name" value="{{ item.item_name }}" required></td>
+                <td>
+                    <select name="type" required>
+                        <option value="OK" {% if item.type == 'OK' %}selected{% endif %}>OK</option>
+                        <option value="Damaged" {% if item.type == 'Damaged' %}selected{% endif %}>Damaged</option>
+                        <option value="Sent for maintenance" {% if item.type == 'Sent for maintenance' %}selected{% endif %}>Sent for maintenance</option>
+                    </select>
+                </td>
+                <td>
+                    <select name="status" required>
+                        <option value="Free" {% if item.status == 'Free' %}selected{% endif %}>Free</option>
+                        <option value="In use" {% if item.status == 'In use' %}selected{% endif %}>In use</option>
+                    </select>
+                </td>
+                <td>
+                    <button type="submit">Save</button>
+                </td>
+                <td>
+                    <button type="button" onclick="toggleEdit({{ item.id }})">Cancel</button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
